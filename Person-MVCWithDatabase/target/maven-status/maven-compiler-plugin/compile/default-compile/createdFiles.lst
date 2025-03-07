@@ -1,0 +1,6 @@
+com\config\DatabaseConfig.class
+com\config\MyWebAppInitializer.class
+com\config\WebConfig.class
+com\example\controller\PersonController.class
+com\dao\PersonDAO.class
+com\model\Person.class
