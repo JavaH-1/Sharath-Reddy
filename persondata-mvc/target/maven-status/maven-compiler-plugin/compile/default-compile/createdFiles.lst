@@ -1,0 +1,4 @@
+com\config\MyWebAppInitializer.class
+com\config\WebConfig.class
+com\example\controller\PersonController.class
+com\model\Person.class
