@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country and State Selector</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f4f8;
+            padding-top: 90px;
+        }
+        .container {
+            max-width: 600px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.75rem;
+            color: #007bff;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .alert {
+            display: none;
+        }
+        .alert .bi {
+            margin-right: 10px;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.25rem;
+            }
+            .btn-primary {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="bi bi-globe"></i> Country and State Selector</h1>
+        <form>
+            <div class="mb-3">
+                <label for="country" class="form-label">Country:</label>
+                <select id="country" class="form-select">
+                    <option value="">Select a Country</option>
+                    <option value="1">India</option>
+                    <option value="2">USA</option>
+                    <option value="3">Canada</option>
+                    <option value="4">UK</option>
+                    <option value="5">Australia</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="state" class="form-label">State:</label>
+                <select id="state" class="form-select">
+                    <option value="">Select a State</option>
+                </select>
+            </div>
+            <div id="alert" class="alert" role="alert">
+                <i id="alert-icon" class="bi"></i><span id="alert-message"></span>
+            </div>
+            <button type="button" id="submitButton" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> Submit
+            </button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#country").on("change", function () {
+                const selectedCountryId = $(this).val();
+                const $stateDropdown = $("#state");
+                $stateDropdown.html('<option value="">Select a State</option>');
+
+                if (selectedCountryId) {
+                    $.ajax({
+                        url: `TableDropdown?countryId=${selectedCountryId}`,
+                        method: "GET",
+                        success: function (response) {
+                            const states = response.trim().split("\n");
+                            states.forEach(line => {
+                                const [id, name] = line.split(":");
+                                if (id && name) {
+                                    $stateDropdown.append(`<option value="${id.trim()}">${name.trim()}</option>`);
+                                }
+                            });
+                        },
+                        error: function () {
+                            alert("Error: Unable to fetch states. Please try again.");
+                        }
+                    });
+                }
+            });
+
+            $("#submitButton").on("click", function () 
+            		{
+                const selectedCountry = $("#country").find("option:selected").text();
+                const selectedState = $("#state").find("option:selected").text();
+                const $alert = $("#alert");
+                const $alertIcon = $("#alert-icon");
+                const $alertMessage = $("#alert-message");
+
+                $alert.removeClass("alert-danger alert-success alert-info").hide();
+                $alertIcon.removeClass("bi-check-circle bi-exclamation-circle bi-info-circle");
+                $alertMessage.text("");
+
+                if (selectedCountry !== "Select a Country" && selectedState !== "Select a State") 
+                {
+                    $alert.addClass("alert-success").show();
+                    $alertIcon.addClass("bi-check-circle");
+                    $alertMessage.text(`Country: ${selectedCountry}, State: ${selectedState}`);
+                } 
+                else 
+                {
+                    $alert.addClass("alert-danger").show();
+                    $alertIcon.addClass("bi-exclamation-circle");
+                    $alertMessage.text("Please select both a country and a state.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
